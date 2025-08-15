@@ -30,27 +30,43 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 # Init Flask and Mongo
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}}, supports_credentials=True)
+CORS(app, resources={
+    r"/*": {
+        "origins": [
+            "http://localhost:5173",
+            "https://ves-pied.vercel.app"
+        ]
+    }
+}, supports_credentials=True)
 client = MongoClient(MONGO_URI)
 db = client["your-db-name"]
 users = db["users"]
+
+ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "https://ves-pied.vercel.app"
+]
+
+@app.after_request
+def add_cors_headers(response):
+    origin = request.headers.get("Origin")
+    if origin in ALLOWED_ORIGINS:
+        response.headers["Access-Control-Allow-Origin"] = origin
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    return response
 
 @app.errorhandler(Exception)
 def handle_error(e):
     response = jsonify({"error": str(e)})
     response.status_code = getattr(e, "code", 500)
-    response.headers["Access-Control-Allow-Origin"] = "http://localhost:5173"
+    origin = request.headers.get("Origin")
+    if origin in ALLOWED_ORIGINS:
+        response.headers["Access-Control-Allow-Origin"] = origin
     response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
     response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
     return response
 
-# Add CORS headers to all responses, including errors
-@app.after_request
-def add_cors_headers(response):
-    response.headers['Access-Control-Allow-Origin'] = 'http://localhost:5173'
-    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
-    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
-    return response
 
 # Gemini setup
 genai.configure(api_key=GEMINI_API_KEY)
@@ -264,4 +280,5 @@ def extract_text():
         os.remove(path)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)

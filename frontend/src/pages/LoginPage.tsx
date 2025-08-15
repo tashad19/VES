@@ -17,7 +17,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ theme, onLogin, setCurrentPage })
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5000/api/login", { username, password });
+      const response = await axios.post("https://ves-t89l.onrender.com/api/login", { username, password });
       onLogin(response.data.token);
       setUsername("");
       setPassword("");

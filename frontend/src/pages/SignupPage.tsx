@@ -17,7 +17,7 @@ const SignupPage: React.FC<SignupPageProps> = ({ theme, setCurrentPage }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/api/register", { username, password });
+      await axios.post("https://ves-t89l.onrender.com/api/register", { username, password });
       setSuccess("Registration successful! Please log in.");
       setError("");
       setUsername("");

@@ -82,7 +82,7 @@ function App() {
     setIsLoading(true);
     try {
       // Generate quiz from existing endpoint (port 5001)
-      const quizResponse = await axios.get("http://localhost:5000/generate-mcq", {
+      const quizResponse = await axios.get("https://ves-t89l.onrender.com/generate-mcq", {
         params: { topic: text },
       });
       const quizData = quizResponse.data.error
@@ -90,7 +90,7 @@ function App() {
         : quizResponse.data;
 
       // Generate aim, introduction, and article from new endpoint (port 5003)
-      const contentResponse = await axios.get("http://localhost:5000/generate-experiment", {
+      const contentResponse = await axios.get("https://ves-t89l.onrender.com/generate-experiment", {
         params: { text: text },
       });
       const { aim, introduction, article } = contentResponse.data;

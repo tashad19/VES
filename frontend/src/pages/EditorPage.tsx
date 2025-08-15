@@ -58,7 +58,7 @@ const EditorPage: React.FC<EditorPageProps> = ({
     formData.append("file", uploadedFile);
 
     try {
-      const response = await axios.post("http://localhost:5000/extract-text", formData, {
+      const response = await axios.post("https://ves-t89l.onrender.com/extract-text", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       setExtractedText(response.data.text);
